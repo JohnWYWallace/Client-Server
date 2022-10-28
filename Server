@@ -1,0 +1,84 @@
+package compNetworksProject;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+public class server {
+	
+    public static ArrayList<String> getRuntimeInfo(String userInput) {		// class to run runtime commands and return results
+    	
+        ArrayList<String> response = new ArrayList<>();
+        String s = null;
+        Process p;
+        
+        try {
+        	
+            p = Runtime.getRuntime().exec(userInput);
+            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            
+            while ((s = br.readLine()) != null) {
+            	
+                System.out.println(s);
+                response.add(s);
+                
+            }
+            
+            p.waitFor();
+            System.out.println ("exit: " + p.exitValue());
+            p.destroy();
+            
+        } catch (Exception e) {}
+        
+        return response;
+        
+    } // end getRunTimeInfo()
+
+    public static void main(String[] args) throws IOException {
+
+        // Socket setup and accept
+        ServerSocket listener = new ServerSocket(4444);
+        System.out.println("[SERVER] Waiting for client connection...");
+
+        while (!listener.isClosed()) {
+        	
+            Socket client = listener.accept();
+            System.out.println("[SERVER] A connection has been established.");
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+            PrintWriter out = new PrintWriter(client.getOutputStream(), true);
+
+            while (client.isConnected()) {
+            	
+                String request = in.readLine(); // (A) from clients out.println(userInput)
+
+                if (request.contains("1")) out.println(Arrays.toString(new ArrayList[]{getRuntimeInfo("date")}));
+                else if (request.contains("2")) out.println(Arrays.toString(new ArrayList[]{getRuntimeInfo("uptime")}));
+                else if (request.contains("3")) out.println(Arrays.toString(new ArrayList[]{getRuntimeInfo("free")}));
+                else if (request.contains("4")) out.println(Arrays.toString(new ArrayList[]{getRuntimeInfo("netstat")}));
+                else if (request.contains("5")) out.println(Arrays.toString(new ArrayList[]{getRuntimeInfo("who")}));
+                else if (request.contains("6")) out.println(Arrays.toString(new ArrayList[]{getRuntimeInfo("ps -ef")}));
+                else if (request.contains("7")) {
+                	
+                    System.out.println("test");
+                    out.println("Test");
+                    
+                }
+                else if (request.contains("exit")) {
+                	
+                    System.out.println("exiting loop");
+                    break;
+                    
+                }
+
+            }
+
+        }
+
+    } // end main
+    
+} // end server class
