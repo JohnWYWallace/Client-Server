@@ -1,0 +1,109 @@
+package compNetworksProject;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.util.Scanner;
+
+public class client {
+
+    public static void main(String[] args) throws IOException, InterruptedException {
+
+        int PORT = 4444;
+        String SERVER_IP = "127.0.0.1";
+        Socket socket = new Socket(SERVER_IP, PORT);	// network socket created
+
+        Scanner scanner = new Scanner(System.in);
+        
+        BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));	// object created to query
+        BufferedReader keyboard = new BufferedReader(new InputStreamReader(System.in));				// object created to intake server info
+        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);							// object created to output server info
+
+        while (socket.isConnected()) {		// while loop when socket is connected
+
+            System.out.println("***Please enter a number to execute a command*** \n"
+                    + "1. Date and Time - show the date and time on the server.\n"
+                    + "2. Uptime - shows how long server has been running since last boot-up.\n"
+                    + "3. Memory Use - shows the current memory usage on the server.\n"
+                    + "4. Netstat - lists network connections on the server.\n"
+                    + "5. Current Users - list of users currently connected to the server.\n"
+                    + "6. Running Processes - list of programs currently running on the server.\n"
+                    + "7. Test Response\n"
+                    + "Type Exit to leave server\n");
+
+            // query for command
+            System.out.printf("Selection: ");
+            String userInput = keyboard.readLine();
+
+            if (userInput.toLowerCase().equals("exit")) {
+            	
+                out.println(userInput);
+                System.out.println("Disconnected.");
+                socket.close();
+                break;
+            }
+
+            System.out.println("Enter number of requests."); // choose number of requests to be made
+            int numRequests = scanner.nextInt();
+            
+            System.out.println("Enter number of threads.");  // choose number of threads
+            int numThreads = scanner.nextInt();
+            System.out.println();
+
+            long startTime = System.nanoTime();				 // initializing timer
+
+            class theThreads extends Thread {				 // class to execute threads
+            	
+                private String choice;
+                private int threadNumber;
+                private int numRequests;
+
+                public theThreads (int threadNumber, int numRequests, String choice) {
+                	
+                    this.threadNumber = threadNumber;
+                    this.numRequests = numRequests;
+                    this.choice = choice;
+                } // end theThreads() 
+                
+                @Override
+                public void run() {
+                	
+                    for (int i = 1; i <= numRequests; i++) {
+                    	
+                        out.println(userInput);
+                        String serverResponse = null;
+                        
+                        try {
+                        	
+                            serverResponse = input.readLine();
+                            
+                        } catch (IOException e) {
+                        	
+                            e.printStackTrace();
+                            
+                        }
+                        System.out.println(serverResponse);
+                    }
+                } // end run()
+            }
+
+            for (int i = 1; i <= numThreads; i++) {
+            	
+                theThreads myThing = new theThreads(i, numRequests, userInput);
+                myThing.start();
+                myThing.join();
+                
+            } // final calculation of time threads take to complete
+            
+            long endTime = System.nanoTime();
+            long totalTime = (endTime - startTime) / 1000000000;
+            System.out.println();
+            System.out.println("Process took " + totalTime + " seconds.\n");
+
+        } // end while loop when socket disconnects
+
+    } // end main()
+
+} //end client class
+
