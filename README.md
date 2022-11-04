@@ -1,3 +1,5 @@
+![John's Demo Banner](JohnsDemoBanner.png)
+
 # Client-Server
 This Repo contains two programs, one for the Server side application, and one for the Client side application. The Server side application is a single threaded server that accepts requests from clients, and the Client side application is multithreaded capable of spawning numerous client sessions that connect to the server.
 
