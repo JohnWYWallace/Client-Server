@@ -9,7 +9,7 @@ This Repo contains two programs, one for the Server side application, and one fo
 -	Upon establishing connection, the user can enter a command that will display the Date and Time, Uptime, Memory use, Netstat, current Users, Running Processes, or Test Response of the server.
 
 ## What I learned from this project?
-- 
+- I learned how to interact with a server using a client application, using Java's Java net socket.
 
 
 ## This project in action!
@@ -27,6 +27,5 @@ Is to run the client side application and you will be prompted with 7 options.
 <img width="485" alt="CleanShot 2022-10-28 at 13 18 38@2x" src="https://user-images.githubusercontent.com/47955658/198695664-0bc4c531-7dc1-480e-916e-dff4a380c8df.png">
 
  <hr>
- 
- ### Step 3:
+
  
